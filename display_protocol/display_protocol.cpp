@@ -77,10 +77,10 @@ public:
         if (byteArray.empty()) {
             throw std::invalid_argument("Empty byte array");
         }
-
-        CommandOpcode opcode = static_cast<CommandOpcode>(byteArray[0]);
-
+       //Зробив як в першому варіанті 
+        uint8_t opcode = byteArray[0]; 
         switch (opcode) {
+        
         case CLEAR_DISPLAY_OPCODE: {
             if (byteArray.size() < 3) {
                 throw std::invalid_argument("Invalid parameters for clear display");
@@ -105,111 +105,7 @@ public:
     }
 
 private:
-    std::string clearDisplay(const std::vector<uint8_t>& params) {
-        if (params.size() < 3) {
-            throw std::invalid_argument("Invalid parameters for clear display");
-        }
-
-        uint16_t color = parseColor(params, 1);
-        std::ostringstream result;
-        result << "Clearing display with color: " << color;
-        return result.str();
-    }
-
-    std::string drawPixel(const std::vector<uint8_t>& params) {
-        if (params.size() < 7) {
-            throw std::invalid_argument("Invalid parameters for draw pixel");
-        }
-
-        int16_t x0 = parseInt16(params, 1);
-        int16_t y0 = parseInt16(params, 3);
-        uint16_t color = parseColor(params, 5);
-
-        std::ostringstream result;
-        result << "Drawing pixel at (" << x0 << ", " << y0 << ") with color " << color;
-        return result.str();
-    }
-
-    std::string drawLine(const std::vector<uint8_t>& params) {
-        if (params.size() < 11) {
-            throw std::invalid_argument("Invalid parameters for draw line");
-        }
-
-        int16_t x0 = parseInt16(params, 1);
-        int16_t y0 = parseInt16(params, 3);
-        int16_t x1 = parseInt16(params, 5);
-        int16_t y1 = parseInt16(params, 7);
-        uint16_t color = parseColor(params, 9);
-
-        std::ostringstream result;
-        result << "Drawing line from (" << x0 << ", " << y0 << ") to (" << x1 << ", " << y1 << ") with color " << color;
-        return result.str();
-    }
-
-    std::string drawRectangle(const std::vector<uint8_t>& params) {
-        if (params.size() < 9) {
-            throw std::invalid_argument("Invalid parameters for draw rectangle");
-        }
-
-        int16_t x0 = parseInt16(params, 1);
-        int16_t y0 = parseInt16(params, 3);
-        int16_t w = parseInt16(params, 5);
-        int16_t h = parseInt16(params, 7);
-        uint16_t color = parseColor(params, 9);
-
-        std::ostringstream result;
-        result << "Drawing rectangle at (" << x0 << ", " << y0 << ") with width " << w << " and height " << h << " with color " << color;
-        return result.str();
-    }
-
-    std::string fillRectangle(const std::vector<uint8_t>& params) {
-        if (params.size() < 9) {
-            throw std::invalid_argument("Invalid parameters for fill rectangle");
-        }
-
-        int16_t x0 = parseInt16(params, 1);
-        int16_t y0 = parseInt16(params, 3);
-        int16_t w = parseInt16(params, 5);
-        int16_t h = parseInt16(params, 7);
-        uint16_t color = parseColor(params, 9);
-
-        std::ostringstream result;
-        result << "Filling rectangle at (" << x0 << ", " << y0 << ") with width " << w << " and height " << h << " with color " << color;
-        return result.str();
-    }
-
-    std::string drawEllipse(const std::vector<uint8_t>& params) {
-        if (params.size() < 11) {
-            throw std::invalid_argument("Invalid parameters for draw ellipse");
-        }
-
-        int16_t x0 = parseInt16(params, 1);
-        int16_t y0 = parseInt16(params, 3);
-        int16_t rx = parseInt16(params, 5); 
-        int16_t ry = parseInt16(params, 7); 
-        uint16_t color = parseColor(params, 9);
-
-        std::ostringstream result;
-        result << "Drawing ellipse centered at (" << x0 << ", " << y0 << ") with radii (" << rx << ", " << ry << ") and color " << color;
-        return result.str();
-    }
-
-    std::string fillEllipse(const std::vector<uint8_t>& params) {
-        if (params.size() < 11) {
-            throw std::invalid_argument("Invalid parameters for fill ellipse");
-        }
-
-        int16_t x0 = parseInt16(params, 1);
-        int16_t y0 = parseInt16(params, 3);
-        int16_t rx = parseInt16(params, 5); 
-        int16_t ry = parseInt16(params, 7); 
-        uint16_t color = parseColor(params, 9);
-
-        std::ostringstream result;
-        result << "Filling ellipse centered at (" << x0 << ", " << y0 << ") with radii (" << rx << ", " << ry << ") and color " << color;
-        return result.str();
-    }
-
+    //Видалив зайві функції
     int16_t parseInt16(const std::vector<uint8_t>& data, size_t offset) {
         return (data[offset + 1] << 8) | data[offset];
     }
@@ -227,7 +123,7 @@ private:
 };
 int main() {
     DisplayProtocol protocol;
-    std::vector<uint8_t> commandBytes = { 0x00, 0xFF }; 
+    std::vector<uint8_t> commandBytes = { 0x00, 0xFF, 0xFF };
     Command* command = nullptr; 
 
     try {
