@@ -1,8 +1,11 @@
-п»ї#include <iostream>
+#pragma once
+#ifndef DISPLAY_PROTOCOL_H
+#define DISPLAY_PROTOCOL_H
+
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
-#include <sstream>
+
 
 
 
@@ -99,7 +102,7 @@ public:
         if (byteArray.empty()) {
             throw std::invalid_argument("Empty byte array");
         }
-        //Р—СЂРѕР±РёРІ СЏРє РІ РїРµСЂС€РѕРјСѓ РІР°СЂС–Р°РЅС‚С–
+        //Зробив як в першому варіанті
         uint8_t opcode = byteArray[0];
         switch (opcode) {
         case CLEAR_DISPLAY_OPCODE: {
@@ -187,91 +190,21 @@ public:
 
 
 private:
-    //Р’РёРґР°Р»РёРІ Р·Р°Р№РІС– С„СѓРЅРєС†С–С—
+    //Видалив зайві функції
     int16_t parseInt16(const std::vector<uint8_t>& data, size_t offset) {
         return (data[offset + 1] << 8) | data[offset];
     }
 
     uint16_t parseColor(const std::vector<uint8_t>& data, size_t offset) {
         if (offset + 1 >= data.size()) {
-            return 0;  
+            return 0;
         }
 
-        
+
         uint16_t color = (data[offset] << 8) | data[offset + 1];
 
         return color;
     }
 };
-int main() {
-    DisplayProtocol protocol;
 
-    std::vector<std::vector<uint8_t>> commandBytes = {
-        { CLEAR_DISPLAY_OPCODE, 0xFF, 0xFF },
-        { DRAW_PIXEL_OPCODE, 0x00, 0x10, 0x00, 0x20, 0xAA, 0xBB }, 
-        { DRAW_LINE_OPCODE, 0x00, 0x10, 0x00, 0x20, 0x00, 0x30, 0x00, 0x40, 0xCC, 0xDD,0x02 }, 
-        { DRAW_RECTANGLE_OPCODE, 0x00, 0x05, 0x00, 0x10, 0x00, 0x15, 0x00, 0x20, 0xEE, 0xFF }, 
-        { FILL_RECTANGLE_OPCODE, 0x00, 0x05, 0x00, 0x10, 0x00, 0x15, 0x00, 0x20, 0x11, 0x22 }, 
-        { DRAW_ELLIPSE_OPCODE, 0x00, 0x08, 0x00, 0x12, 0x00, 0x09, 0x00, 0x07, 0x33, 0x44 }, 
-        { FILL_ELLIPSE_OPCODE, 0x00, 0x06, 0x00, 0x11, 0x00, 0x05, 0x00, 0x04, 0x55, 0x66 },
-    };
-
-    for (const auto& commandBytes : commandBytes) {
-        Command* command = nullptr;
-
-        try {
-            protocol.parseCommand(commandBytes, command);
-
-            if (command) {
-                switch (command->opcode) {
-                    case CLEAR_DISPLAY_OPCODE: {
-                        ClearDisplay* clearCommand = static_cast<ClearDisplay*>(command);
-                        std::cout << "Clearing display with color: " << clearCommand->color << std::endl;
-                        break;
-                    }
-                    case DRAW_PIXEL_OPCODE: {
-                        DrawPixel* drawPixelCommand = static_cast<DrawPixel*>(command);
-                        std::cout << "Drawing pixel at (" << drawPixelCommand->x0 << ", " << drawPixelCommand->y0 << ") with color: " << drawPixelCommand->color << std::endl;
-                        break;
-                    }
-                    case DRAW_LINE_OPCODE: {
-                        DrawLine* drawLineCommand = static_cast<DrawLine*>(command);
-                        std::cout << "Drawing line from (" << drawLineCommand->x0 << ", " << drawLineCommand->y0 << ") to (" << drawLineCommand->x1 << ", " << drawLineCommand->y1 << ") with color: " << drawLineCommand->color << std::endl;
-                        break;
-                    }
-                    case DRAW_RECTANGLE_OPCODE: {
-                        DrawRectangle* drawRectCommand = static_cast<DrawRectangle*>(command);
-                        std::cout << "Drawing rectangle at (" << drawRectCommand->x << ", " << drawRectCommand->y << ") with width: " << drawRectCommand->width << " and height: " << drawRectCommand->height << " with color: " << drawRectCommand->color << std::endl;
-                        break;
-                    }
-                    case FILL_RECTANGLE_OPCODE: {
-                        FillRectangle* fillRectCommand = static_cast<FillRectangle*>(command);
-                        std::cout << "Filling rectangle at (" << fillRectCommand->x << ", " << fillRectCommand->y << ") with width: " << fillRectCommand->width << " and height: " << fillRectCommand->height << " with color: " << fillRectCommand->color << std::endl;
-                        break;
-                    }
-                    case DRAW_ELLIPSE_OPCODE: {
-                        DrawEllipse* drawEllipseCommand = static_cast<DrawEllipse*>(command);
-                        std::cout << "Drawing ellipse at (" << drawEllipseCommand->x << ", " << drawEllipseCommand->y << ") with radius x: " << drawEllipseCommand->rx << " and radius y: " << drawEllipseCommand->ry << " with color: " << drawEllipseCommand->color << std::endl;
-                        break;
-                    }
-                    case FILL_ELLIPSE_OPCODE: {
-                        FillEllipse* fillEllipseCommand = static_cast<FillEllipse*>(command);
-                        std::cout << "Filling ellipse at (" << fillEllipseCommand->x << ", " << fillEllipseCommand->y << ") with radius x: " << fillEllipseCommand->rx << " and radius y: " << fillEllipseCommand->ry << " with color: " << fillEllipseCommand->color << std::endl;
-                        break;
-                    }
-                    default:
-                        std::cerr << "Unknown command opcode: " << command->opcode << std::endl;
-                        break;
-                }
-
-                delete command;
-            }
-        } catch (const std::invalid_argument& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-    }
-
-    return 0;
-}
-
-
+#endif // DISPLAY_PROTOCOL_H

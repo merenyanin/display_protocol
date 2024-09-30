@@ -129,6 +129,10 @@
   <ItemGroup>
     <ClCompile Include="display_protocol.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="display_protocol.h" />
+    <ClInclude Include="test.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
