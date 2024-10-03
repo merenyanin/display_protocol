@@ -106,7 +106,7 @@ public:
         uint8_t opcode = byteArray[0];
         switch (opcode) {
         case CLEAR_DISPLAY_OPCODE: {
-            if (byteArray.size() < 3) {
+            if (byteArray.size() != 3) {
                 throw std::invalid_argument("Invalid parameters for clear display");
             }
             uint16_t color = parseColor(byteArray, 1);
@@ -114,7 +114,7 @@ public:
             break;
         }
         case DRAW_PIXEL_OPCODE: {
-            if (byteArray.size() < 7) {
+            if (byteArray.size() != 7) {
                 throw std::invalid_argument("Invalid parameters for draw pixel");
             }
             int16_t x0 = parseInt16(byteArray, 1);
@@ -124,7 +124,7 @@ public:
             break;
         }
         case DRAW_LINE_OPCODE: {
-            if (byteArray.size() < 11) {
+            if (byteArray.size() != 11) {
                 throw std::invalid_argument("Invalid parameters for draw line");
             }
             int16_t x0 = parseInt16(byteArray, 1);
@@ -136,7 +136,7 @@ public:
             break;
         }
         case DRAW_RECTANGLE_OPCODE: {
-            if (byteArray.size() < 11) {
+            if (byteArray.size() != 11) {
                 throw std::invalid_argument("Invalid parameters for draw rectangle");
             }
             int16_t x = parseInt16(byteArray, 1);
@@ -148,7 +148,7 @@ public:
             break;
         }
         case FILL_RECTANGLE_OPCODE: {
-            if (byteArray.size() < 11) {
+            if (byteArray.size() != 11) {
                 throw std::invalid_argument("Invalid parameters for fill rectangle");
             }
             int16_t x = parseInt16(byteArray, 1);
@@ -160,7 +160,7 @@ public:
             break;
         }
         case DRAW_ELLIPSE_OPCODE: {
-            if (byteArray.size() < 11) {
+            if (byteArray.size() != 11) {
                 throw std::invalid_argument("Invalid parameters for draw ellipse");
             }
             int16_t x = parseInt16(byteArray, 1);
@@ -172,7 +172,7 @@ public:
             break;
         }
         case FILL_ELLIPSE_OPCODE: {
-            if (byteArray.size() < 11) {
+            if (byteArray.size() != 11) {
                 throw std::invalid_argument("Invalid parameters for fill ellipse");
             }
             int16_t x = parseInt16(byteArray, 1);
@@ -206,5 +206,7 @@ private:
         return color;
     }
 };
+
+
 
 #endif // DISPLAY_PROTOCOL_H

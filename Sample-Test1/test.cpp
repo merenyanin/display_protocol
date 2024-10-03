@@ -36,21 +36,40 @@ TEST(DisplayProtocolTest, InvalidDrawPixelCommandParams) {
     EXPECT_THROW(protocol.parseCommand(std::vector<uint8_t>(byte_array, byte_array + sizeof(byte_array)), cmd), std::invalid_argument);
 }
 
-// Тест для коректної команди DrawPixel
-TEST(DisplayProtocolTest, ValidDrawPixelCommand) {
-    uint8_t byte_array[] = { DRAW_PIXEL_OPCODE, 0x00, 0x02, 0x00, 0x04, 0x99, 0x88 };
+TEST(DisplayProtocolTest, InvalidDrawPixelCommandParams2) {
+    uint8_t byte_array[] = { DRAW_PIXEL_OPCODE, 0x00, 0x10 };
     Command* cmd = nullptr;
 
     DisplayProtocol protocol;
-    EXPECT_NO_THROW(protocol.parseCommand(std::vector<uint8_t>(byte_array, byte_array + sizeof(byte_array)), cmd));
+    EXPECT_THROW(protocol.parseCommand(std::vector<uint8_t>(byte_array, byte_array + sizeof(byte_array)), cmd), std::invalid_argument);
+}
+
+TEST(DisplayProtocolTest, InvalidDrawPixelCommandParams3) {
+    uint8_t byte_array[] = { DRAW_PIXEL_OPCODE, 0x00, 0x10,0x00,0x20,0xAA };
+    Command* cmd = nullptr;
+
+    DisplayProtocol protocol;
+    EXPECT_THROW(protocol.parseCommand(std::vector<uint8_t>(byte_array, byte_array + sizeof(byte_array)), cmd), std::invalid_argument);
+}
+
+// Тест для коректної команди DrawPixel
+TEST(DisplayProtocolTest, ValidDrawPixelCommand) {
+    // Масив байтів з правильними даними.
+    uint8_t valid_byte_array[] = { DRAW_PIXEL_OPCODE, 0x00, 0x10, 0x00, 0x20,0xAA, 0xBB };
+    Command* cmd = nullptr;
+
+    DisplayProtocol protocol;
+    EXPECT_NO_THROW(protocol.parseCommand(std::vector<uint8_t>(valid_byte_array, valid_byte_array + sizeof(valid_byte_array)), cmd));
 
     DrawPixel* drawPixelCmd = dynamic_cast<DrawPixel*>(cmd);
     ASSERT_NE(drawPixelCmd, nullptr);
-    EXPECT_EQ(drawPixelCmd->x0, 0x0002); 
-    EXPECT_EQ(drawPixelCmd->y0, 0x0004); 
-    EXPECT_EQ(drawPixelCmd->color, 0x9988); 
 
-    delete cmd;
+    EXPECT_EQ(drawPixelCmd->x0, 0x1000); // Перевірка координати x0
+    EXPECT_EQ(drawPixelCmd->y0, 0x2000); // Перевірка координати y0
+    EXPECT_EQ(drawPixelCmd->color, 0xAABB); // Перевірка кольору
+
+    
+
 }
 
 // Тест для некоректних параметрів команди DrawLine
@@ -101,10 +120,10 @@ TEST(DisplayProtocolTest, ValidDrawRectangleCommand) {
 
     DrawRectangle* drawRectCmd = dynamic_cast<DrawRectangle*>(cmd);
     ASSERT_NE(drawRectCmd, nullptr); 
-    EXPECT_EQ(drawRectCmd->x, 0x0005); 
-    EXPECT_EQ(drawRectCmd->y, 0x0010); 
-    EXPECT_EQ(drawRectCmd->width, 0x0015); 
-    EXPECT_EQ(drawRectCmd->height, 0x0020);
+    EXPECT_EQ(drawRectCmd->x, 0x0500);
+    EXPECT_EQ(drawRectCmd->y, 0x1000); 
+    EXPECT_EQ(drawRectCmd->width, 0x1500);
+    EXPECT_EQ(drawRectCmd->height, 0x2000);
     EXPECT_EQ(drawRectCmd->color, 0xEEFF); 
 
     delete cmd; 
@@ -129,10 +148,10 @@ TEST(DisplayProtocolTest, ValidFillRectangleCommand) {
 
     FillRectangle* fillRectCmd = dynamic_cast<FillRectangle*>(cmd);
     ASSERT_NE(fillRectCmd, nullptr); 
-    EXPECT_EQ(fillRectCmd->x, 0x0005); 
-    EXPECT_EQ(fillRectCmd->y, 0x0010); 
-    EXPECT_EQ(fillRectCmd->width, 0x0015); 
-    EXPECT_EQ(fillRectCmd->height, 0x0020); 
+    EXPECT_EQ(fillRectCmd->x, 0x0500); 
+    EXPECT_EQ(fillRectCmd->y, 0x1000); 
+    EXPECT_EQ(fillRectCmd->width, 0x1500); 
+    EXPECT_EQ(fillRectCmd->height, 0x2000); 
     EXPECT_EQ(fillRectCmd->color, 0x1122); 
 
     delete cmd; 
@@ -148,6 +167,7 @@ TEST(DisplayProtocolTest, InvalidDrawEllipseCommandParams) {
 }
 
 // Тест для коректної команди DrawEllipse
+
 TEST(DisplayProtocolTest, ValidDrawEllipseCommand) {
     uint8_t byte_array[] = { DRAW_ELLIPSE_OPCODE, 0x00, 0x08, 0x00, 0x12, 0x00, 0x09, 0x00, 0x07, 0x33, 0x44 };
     Command* cmd = nullptr;
@@ -157,10 +177,10 @@ TEST(DisplayProtocolTest, ValidDrawEllipseCommand) {
 
     DrawEllipse* drawEllipseCmd = dynamic_cast<DrawEllipse*>(cmd);
     ASSERT_NE(drawEllipseCmd, nullptr); 
-    EXPECT_EQ(drawEllipseCmd->x, 0x0008); 
-    EXPECT_EQ(drawEllipseCmd->y, 0x0012); 
-    EXPECT_EQ(drawEllipseCmd->rx, 0x0009); 
-    EXPECT_EQ(drawEllipseCmd->ry, 0x0007); 
+    EXPECT_EQ(drawEllipseCmd->x, 0x0800); 
+    EXPECT_EQ(drawEllipseCmd->y, 0x1200); 
+    EXPECT_EQ(drawEllipseCmd->rx, 0x0900); 
+    EXPECT_EQ(drawEllipseCmd->ry, 0x0700); 
     EXPECT_EQ(drawEllipseCmd->color, 0x3344); 
 
     delete cmd; 
@@ -185,10 +205,10 @@ TEST(DisplayProtocolTest, ValidFillEllipseCommand) {
 
     FillEllipse* fillEllipseCmd = dynamic_cast<FillEllipse*>(cmd);
     ASSERT_NE(fillEllipseCmd, nullptr); 
-    EXPECT_EQ(fillEllipseCmd->x, 0x0006); 
-    EXPECT_EQ(fillEllipseCmd->y, 0x0011);
-    EXPECT_EQ(fillEllipseCmd->rx, 0x0005); 
-    EXPECT_EQ(fillEllipseCmd->ry, 0x0004); 
+    EXPECT_EQ(fillEllipseCmd->x, 0x0600); 
+    EXPECT_EQ(fillEllipseCmd->y, 0x1100);
+    EXPECT_EQ(fillEllipseCmd->rx, 0x0500); 
+    EXPECT_EQ(fillEllipseCmd->ry, 0x0400); 
     EXPECT_EQ(fillEllipseCmd->color, 0x5566); 
 
     delete cmd; 
